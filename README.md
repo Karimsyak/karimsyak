@@ -1,16 +1,36 @@
-### Hi there 👋
+# wrappy
 
-<!--
-**Karimsyak/karimsyak** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Callback wrapping utility
 
-Here are some ideas to get you started:
+## USAGE
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+```javascript
+var wrappy = require("wrappy")
+
+// var wrapper = wrappy(wrapperFunction)
+
+// make sure a cb is called only once
+// See also: http://npm.im/once for this specific use case
+var once = wrappy(function (cb) {
+  var called = false
+  return function () {
+    if (called) return
+    called = true
+    return cb.apply(this, arguments)
+  }
+})
+
+function printBoo () {
+  console.log('boo')
+}
+// has some rando property
+printBoo.iAmBooPrinter = true
+
+var onlyPrintOnce = once(printBoo)
+
+onlyPrintOnce() // prints 'boo'
+onlyPrintOnce() // does nothing
+
+// random property is retained!
+assert.equal(onlyPrintOnce.iAmBooPrinter, true)
+```
